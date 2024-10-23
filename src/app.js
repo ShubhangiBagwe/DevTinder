@@ -65,29 +65,73 @@ const app = express()
 
 /****************************************************** Multiple routes handlers ***************************************************************************/
 
-app.use(
-    '/user',
-    [(req, res, next) => {
-        console.log("handling the response 1")
-        // res.send("response")
-        next()
-    },
-    (req, res, next) => {
-        console.log("Handking the response 2")
-        // res.send("Response 2")
-        next()
-    }],
-    (req, res, next) => {
-        console.log("Handking the response 3")
-        // res.send("Response 3")
-        next()
+// app.use(
+//     '/user',
+//     [(req, res, next) => {
+//         console.log("handling the response 1")
+//         // res.send("response")
+//         next()
+//     },
+//     (req, res, next) => {
+//         console.log("Handking the response 2")
+//         // res.send("Response 2")
+//         next()
+//     }],
+//     (req, res, next) => {
+//         console.log("Handking the response 3")
+//         // res.send("Response 3")
+//         next()
 
-    },
-    (req, res) => {
-        console.log("Handking the response 4")
-        res.send("Response 4")
-    }
-)
+//     },
+//     (req, res) => {
+//         console.log("Handking the response 4")
+//         res.send("Response 4")
+//     }
+// )
+
+
+
+/******************************************************  Handling middleware for all get post and all http request ***************************************************************************/
+
+
+const {adminAuth} = require("./middlewares/auth")
+const {userAuth} = require("./middlewares/auth")
+
+
+// app.use('/admin', (req, res, next) => {
+//     console.log("admin auth is getting check")
+//     const token = "xyz"
+//     const isAdminAuthorized = token === "xyz"
+//     if (!isAdminAuthorized) {
+//         res.status(401).send("Unauthorized Request")
+//     } else {
+//         next()
+//     }
+// })
+
+app.use('/admin',adminAuth)
+
+
+app.get("/user",userAuth, (req, res) => {
+    res.send('User Data')
+})
+
+
+app.get("/user/login",userAuth, (req, res) => {
+    res.send('User Login successfully')
+})
+
+app.get("/user/data",userAuth, (req, res) => {
+    res.send('User Data sent successfully')
+})
+
+app.get("/admin/getData", (req, res) => {
+    res.send('User Data Send')
+})
+
+app.get("/admin/deleteData", (req, res) => {
+    res.send("Deleted data successfully")
+})
 
 
 app.listen(7777, () => {
