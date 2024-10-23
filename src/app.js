@@ -17,6 +17,8 @@ const app = express()
 //     res.send("Namaste")
 // })
 
+/****************************************************** HTTP Methods ***************************************************************************/
+
 // app.get('/ab?c', (req, res) => {
 //     res.send({ firstName: 'shubhnagi', lastName: 'Bagwe' })
 // })
@@ -46,19 +48,46 @@ const app = express()
 //     res.send({ firstName: 'shubhnagi', lastName: 'Bagwe' })
 // })
 
-app.get('/user/:userId/:name/:password', (req, res) => {
-    // console.log(req.query)
-    console.log(req.params)
-    res.send({ firstName: 'shubhnagi', lastName: 'Bagwe' })
-})
+// app.get('/user/:userId/:name/:password', (req, res) => {
+//     // console.log(req.query)
+//     console.log(req.params)
+//     res.send({ firstName: 'shubhnagi', lastName: 'Bagwe' })
+// })
 
-app.post('/user', (req, res) => {
-    res.send("data successsfully save to the database")
-})
+// app.post('/user', (req, res) => {
+//     res.send("data successsfully save to the database")
+// })
 
-app.delete('/user', (req, res) => {
-    res.send("deleted successfully")
-})
+// app.delete('/user', (req, res) => {
+//     res.send("deleted successfully")
+// })
+
+
+/****************************************************** Multiple routes handlers ***************************************************************************/
+
+app.use(
+    '/user',
+    [(req, res, next) => {
+        console.log("handling the response 1")
+        // res.send("response")
+        next()
+    },
+    (req, res, next) => {
+        console.log("Handking the response 2")
+        // res.send("Response 2")
+        next()
+    }],
+    (req, res, next) => {
+        console.log("Handking the response 3")
+        // res.send("Response 3")
+        next()
+
+    },
+    (req, res) => {
+        console.log("Handking the response 4")
+        res.send("Response 4")
+    }
+)
 
 
 app.listen(7777, () => {
