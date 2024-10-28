@@ -1,9 +1,10 @@
 const express = require("express")
 const { userAuth } = require("../middlewares/auth")
+const { validateEditProfileData } = require("../utils/validation")
 
 const profileRouter = express.Router()
 
-profileRouter.get("/profile", userAuth, async (req, res) => {
+profileRouter.get("/profile/view", userAuth, async (req, res) => {
     try {
         const user = req.user
         res.send(user)
@@ -12,11 +13,22 @@ profileRouter.get("/profile", userAuth, async (req, res) => {
     }
 })
 
-profileRouter.get("/sendConnectionReq", userAuth, async (req, res) => {
+profileRouter.patch("/profile/edit", userAuth, async (req, res) => {
+    try {
+        if (!validateEditProfileData) {
+            throw new Error("Invalid profile data")
+        } 
+        const loggedInUser = req.user
+        console.log(loggedInUser)
 
-    const user = req.user
-    console.log("Sending the connection req")
-    res.send(user.firstName + "send the connection req")
+        Object.keys(req.body).forEach((key) => (loggedInUser[key] = req.body[key]))
+
+        await loggedInUser.save()
+
+        res.send(`${loggedInUser.firstName} you profile updated successfully `,)
+    } catch (err) {
+        res.status(400).send("Error:" + err.message)
+    }
 })
 
 module.exports = profileRouter
